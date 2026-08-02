@@ -6,13 +6,11 @@
 
 > **これは検査専用のツールです。** ファイルの書き換えや自動修正は一切行いません。読み取りのみで動作します。
 
-```
 [エラー] text-overlap-001
-  テキスト「料金プラン」と「人気No.1」が 59×17px(面積 1003px²)重なっており、文字が読めなくなります。
-  → div.hero > h1 (24, 48) 163×36px
-  → span.badge (128, 55) 66×17px
-  対処: どちらかの位置・余白を調整するか、重ねる意図がある場合は背景を不透明にしてください。
-```
+テキスト「料金プラン」と「人気No.1」が 59×17px(面積 1003px²)重なっており、文字が読めなくなります。
+→ div.hero > h1 (24, 48) 163×36px
+→ span.badge (128, 55) 66×17px
+対処: どちらかの位置・余白を調整するか、重ねる意図がある場合は背景を不透明にしてください。
 
 ## なぜ作ったか
 
@@ -26,27 +24,38 @@ AIにHTMLやスライドを作らせると、コードは正しいのに**表示
 
 ## インストール
 
+npmへの公開は準備中です。現在は clone してビルドします。
+
 ```bash
-npm install -g layout-doctor-mcp
+git clone https://github.com/h-kazuki-pixel/layout-doctor-mcp.git
+cd layout-doctor-mcp
+npm install && npm run build
 npx playwright install chromium
 ```
 
-`npx` で直接使うこともできます(初回のみChromiumの導入が必要)。
+⚠️ **`npx playwright install chromium` は必ずこのディレクトリの中で実行してください。**別の場所で実行すると、依存とは異なるバージョンの Playwright 用に Chromium が入り、起動時に `Executable doesn't exist at ...` エラーになります。
 
 ### Claude Desktop の設定
 
-`claude_desktop_config.json` に追記します。
+設定ファイル `claude_desktop_config.json` の場所:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+次を追記します。`/absolute/path/to` は clone した場所に置き換えてください。
 
 ```json
 {
   "mcpServers": {
     "layout-doctor": {
-      "command": "npx",
-      "args": ["-y", "layout-doctor-mcp"]
+      "command": "node",
+      "args": ["/absolute/path/to/layout-doctor-mcp/dist/src/index.js"]
     }
   }
 }
 ```
+
+macOS の Claude Desktop は起動時にシェルのPATHを継承しないため、`npx` ではなく **`node` と絶対パスで指定するのが確実**です。
 
 **Chromiumを新たに入れたくない場合**、既にあるChromeを使えます。
 
@@ -54,8 +63,8 @@ npx playwright install chromium
 {
   "mcpServers": {
     "layout-doctor": {
-      "command": "npx",
-      "args": ["-y", "layout-doctor-mcp"],
+      "command": "node",
+      "args": ["/absolute/path/to/layout-doctor-mcp/dist/src/index.js"],
       "env": {
         "LAYOUT_DOCTOR_CHROMIUM": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
       }
@@ -73,8 +82,8 @@ npx playwright install chromium
 layout-doctor-mcp をセットアップしてください。
 
 1. https://github.com/h-kazuki-pixel/layout-doctor-mcp の README を読む
-2. 私の claude_desktop_config.json に必要な設定を追記する
-3. Chromium が必要なので、導入コマンドも提示する
+2. clone とビルドのコマンドを1つずつ提示する
+3. 私の claude_desktop_config.json に必要な設定を追記する(node と絶対パスを使う)
 4. 設定後、動作確認として layout_check を1回実行して結果を見せる
 
 私は非エンジニアです。実行するコマンドは1つずつ提示してください。
@@ -111,24 +120,23 @@ console.log(formatReport(r));
 
 次のように出力されます。
 
-```
 検査完了: エラー 2 件 / 警告 0 件 / 情報 0 件
 ビューポート 800×600 / 所要 434ms
 
 [エラー] placeholder-left-001
-  本文に undefined が残っています。該当箇所: 「…料金プラン 月額 undefined 円 人気No.1…」
-  → html
-  対処: 変数の埋め込みが失敗しています。値が未定義でないか、テンプレートエンジンが適用されているかを確認してください。
+本文に undefined が残っています。該当箇所: 「…料金プラン 月額 undefined 円 人気No.1…」
+→ html
+対処: 変数の埋め込みが失敗しています。値が未定義でないか、テンプレートエンジンが適用されているかを確認してください。
 
 [エラー] text-overlap-001
-  テキスト「料金プラン」と「人気No.1」が 59×17px(面積 1003px²)重なっており、文字が読めなくなります。
-  → div > h1 (24, 48) 163×36px
-  → span.badge (128, 55) 66×17px
-  対処: どちらかの位置・余白を調整するか、重ねる意図がある場合は背景を不透明にしてください。
+テキスト「料金プラン」と「人気No.1」が 59×17px(面積 1003px²)重なっており、文字が読めなくなります。
+→ div > h1 (24, 48) 163×36px
+→ span.badge (128, 55) 66×17px
+対処: どちらかの位置・余白を調整するか、重ねる意図がある場合は背景を不透明にしてください。
 
 補足:
-  - 計測: 要素 6 個 / テキスト矩形 3 個 (抽出 7ms・判定 1ms)
-```
+
+計測: 要素 6 個 / テキスト矩形 3 個 (抽出 7ms・判定 1ms)
 
 所要時間はブラウザの起動を含むため環境によって大きく変わります。座標もフォントによって数ピクセル前後します。
 
@@ -143,7 +151,7 @@ console.log(formatReport(r));
 }
 ```
 
-`path`(ファイル)・`html`(文字列)・`url`(既定では localhost のみ)のいずれか1つと、`viewport` を渡します。
+`path`(ファイルの**絶対パス**)・`html`(文字列)・`url`(既定では localhost のみ)のいずれか1つと、`viewport` を渡します。
 
 **`viewport` に既定値はありません。** 画面幅によって結果が変わるため、必ず明示してもらう設計にしています。スライドなら 1280×720、一般的なWebページなら 1280×800 が目安です。
 
@@ -186,10 +194,6 @@ console.log(formatReport(r));
 
 要素同士の重なりは、意図的な重ね置きと本当の不具合を機械的に区別できません。誤検出でツール全体の信頼を落とすより、必要な人だけが有効にする形を選びました。`checks` に明示的に含めると実行されます。
 
-## 検査しないこと
-
-デザインの良し悪し、コントラスト比などのアクセシビリティ全般、前回との差分(ビジュアル回帰)、複数幅にわたるレスポンシブ検査は対象外です。詳しくは「使わない方がいい場合」を参照してください。
-
 ## 使わない方がいい場合
 
 - **静的なHTMLしか検査しないなら** — 文字列検査だけで足りる用途(プレースホルダの残留チェックのみ等)であれば、grep や既存のHTMLリンターの方が速く、ブラウザも要りません
@@ -218,6 +222,10 @@ console.log(formatReport(r));
 - `candidate` — 座標上は検出したが、**人間の目に見えるかは未判定**
 
 `candidate` には、透明な要素同士の重なりのように「座標は重なっているが実際には見えない」ものが混ざりえます。この切り分け(レンダリング結果を用いた可視性の確認)は v0.5 で追加予定です。
+
+## 検査しないこと
+
+デザインの良し悪し、コントラスト比などのアクセシビリティ全般、前回との差分(ビジュアル回帰)、複数幅にわたるレスポンシブ検査は対象外です。詳しくは「使わない方がいい場合」を参照してください。
 
 ## 測定を安定させるための処理
 
