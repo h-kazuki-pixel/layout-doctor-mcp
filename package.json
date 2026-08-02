@@ -1,0 +1,50 @@
+{
+  "name": "layout-doctor-mcp",
+  "version": "0.1.0",
+  "description": "レンダリングした結果を実測して、HTMLのレイアウト破綻を検出するMCPサーバー。ベースライン画像は不要。検査専用・自動修正なし。",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "bin": {
+    "layout-doctor-mcp": "dist/src/index.js"
+  },
+  "files": [
+    "dist/src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "layout",
+    "overflow",
+    "text-overlap",
+    "html",
+    "playwright",
+    "linter",
+    "accessibility"
+  ],
+  "author": "h-kazuki-pixel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h-kazuki-pixel/layout-doctor-mcp.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "playwright": "^1.49.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
