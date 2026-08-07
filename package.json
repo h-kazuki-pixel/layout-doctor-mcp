@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/src/index.js",
-    "test": "npm run build && node --test dist/test/",
+    "test": "npm run build && node --test dist/test/geometry.test.js dist/test/static.test.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
