@@ -79,6 +79,10 @@ macOS の Claude Desktop は起動時にシェルのPATHを継承しないため
   }
 }
 ```
+Windows / Linux では、パスを次のように置き換えてください。JSONの中では `\` を `\\` と2つ重ねて書きます。
+
+- Windows: `C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe`
+- Linux: `/usr/bin/google-chrome`(または `/usr/bin/chromium`)
 
 ## セットアップをAIに任せる
 
@@ -257,6 +261,20 @@ console.log(formatReport(r));
 
 - Walsh, Snyder, Kapfhammer, McMinn: *Automated Layout Failure Detection for Responsive Web Pages* — レイアウト破綻の5分類
 - Althomali, Kapfhammer, McMinn: *Automated visual classification of DOM-based presentation failure reports for responsive web pages* (STVR 2021) — DOM検出の偽陽性と、不透明度操作による可視性判定
+
+## テスト
+
+```bash
+npm test
+```
+
+テスト50件が通ります(`geometry.test.ts` 28件 / `static.test.ts` 22件)。検査項目ごとに「破綻を検出できること」と「意図的なデザインを誤検出しないこと」を対にして確認しています。
+
+- 重なったテキストを検出する / 隙間なく並んだ2列は重なりとみなさない
+- スクリーンリーダー専用テキストを誤検出しない
+- `overflow: hidden` で隠れたテキストは重なりとみなさない
+- 同じ入力を2回検査すると同じ結果になる(決定論性)
+- 外部リソースは既定で読み込まれない
 
 ## ライセンス
 
