@@ -1,5 +1,7 @@
 # layout-doctor-mcp
 
+[![CI](https://github.com/h-kazuki-pixel/layout-doctor-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/h-kazuki-pixel/layout-doctor-mcp/actions/workflows/ci.yml)
+
 **HTMLを実際にレンダリングして、レイアウトの破綻を数値で検出するMCPサーバー。**
 
 比較用のベースライン画像は要りません。いま生成したその1枚だけで判定します。
